@@ -547,6 +547,37 @@ class Tasks_model extends App_Model
             unset($data['followers']);
         }
 
+        // Handle task_type - ensure it's a string, not an array
+        if (isset($data['task_type'])) {
+            if (is_array($data['task_type'])) {
+                $data['task_type'] = implode(',', $data['task_type']);
+            }
+            // Remove if empty
+            if (empty($data['task_type'])) {
+                unset($data['task_type']);
+            }
+        }
+
+        // Handle task_nature - ensure it's a string, not an array (multi-select field)
+        if (isset($data['task_nature'])) {
+            if (is_array($data['task_nature'])) {
+                // Filter out empty values and "N/a"
+                $data['task_nature'] = array_filter($data['task_nature'], function($value) {
+                    return !empty($value) && $value !== 'N/a';
+                });
+                if (!empty($data['task_nature'])) {
+                    $data['task_nature'] = implode(',', $data['task_nature']);
+                } else {
+                    unset($data['task_nature']);
+                }
+            } else {
+                // Remove if empty or "N/a"
+                if (empty($data['task_nature']) || $data['task_nature'] === 'N/a') {
+                    unset($data['task_nature']);
+                }
+            }
+        }
+
         $this->db->insert(db_prefix() . 'tasks', $data);
         $insert_id = $this->db->insert_id();
         if ($insert_id) {

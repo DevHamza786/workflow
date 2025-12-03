@@ -113,3 +113,25 @@ ERROR - 2025-12-03 17:24:37 --> Could not find the language line "admin"
 ERROR - 2025-12-03 17:24:53 --> Could not find the language line "features"
 ERROR - 2025-12-03 17:25:33 --> Could not find the language line "features"
 ERROR - 2025-12-03 17:25:41 --> Could not find the language line "admin"
+ERROR - 2025-12-03 18:47:08 --> Could not find the language line "admin"
+ERROR - 2025-12-03 18:47:47 --> Could not find the language line "features"
+ERROR - 2025-12-03 18:48:22 --> Could not find the language line "features"
+ERROR - 2025-12-03 18:53:14 --> Could not find the language line "admin"
+ERROR - 2025-12-03 18:53:20 --> Could not find the language line "features"
+ERROR - 2025-12-03 18:53:46 --> Could not find the language line "features"
+ERROR - 2025-12-03 18:54:37 --> Could not find the language line "features"
+ERROR - 2025-12-03 18:56:00 --> Severity: Warning --> Array to string conversion C:\laragon\www\workflows\system\database\DB_driver.php 1472
+ERROR - 2025-12-03 18:56:00 --> Severity: error --> Exception: Unknown column 'task_type' in 'field list' C:\laragon\www\workflows\system\database\drivers\mysqli\mysqli_driver.php 307
+ERROR - 2025-12-03 18:56:32 --> Severity: Warning --> Array to string conversion C:\laragon\www\workflows\system\database\DB_driver.php 1472
+ERROR - 2025-12-03 18:56:32 --> Severity: error --> Exception: Unknown column 'task_type' in 'field list' C:\laragon\www\workflows\system\database\drivers\mysqli\mysqli_driver.php 307
+ERROR - 2025-12-03 18:58:02 --> Severity: Warning --> Array to string conversion C:\laragon\www\workflows\system\database\DB_driver.php 1472
+ERROR - 2025-12-03 18:58:02 --> Severity: error --> Exception: Unknown column 'task_type' in 'field list' C:\laragon\www\workflows\system\database\drivers\mysqli\mysqli_driver.php 307
+ERROR - 2025-12-03 18:58:53 --> Severity: Warning --> Array to string conversion C:\laragon\www\workflows\system\database\DB_driver.php 1472
+ERROR - 2025-12-03 18:58:53 --> Severity: error --> Exception: Unknown column 'task_type' in 'field list' C:\laragon\www\workflows\system\database\drivers\mysqli\mysqli_driver.php 307
+ERROR - 2025-12-03 19:02:20 --> Severity: Warning --> Array to string conversion C:\laragon\www\workflows\system\database\DB_driver.php 1472
+ERROR - 2025-12-03 19:02:20 --> Severity: error --> Exception: Unknown column 'task_nature' in 'field list' C:\laragon\www\workflows\system\database\drivers\mysqli\mysqli_driver.php 307
+ERROR - 2025-12-03 19:04:24 --> Severity: error --> Exception: Unknown column 'task_nature' in 'field list' C:\laragon\www\workflows\system\database\drivers\mysqli\mysqli_driver.php 307
+ERROR - 2025-12-03 19:05:45 --> Could not find the language line "features"
+ERROR - 2025-12-03 19:09:07 --> Severity: Warning --> Undefined array key "full_name" C:\laragon\www\workflows\application\views\admin\tasks\view_task_template.php 1094
+ERROR - 2025-12-03 19:09:07 --> Severity: Warning --> Undefined array key "full_name" C:\laragon\www\workflows\application\views\admin\tasks\view_task_template.php 1094
+ERROR - 2025-12-03 19:09:07 --> Severity: Warning --> Undefined array key "full_name" C:\laragon\www\workflows\application\views\admin\tasks\view_task_template.php 1094
