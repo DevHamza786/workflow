@@ -6,18 +6,19 @@ class Authentication extends ClientsController
 {
     public function __construct()
     {
+        // Block client authentication - redirect to admin login BEFORE parent constructor
+        // This prevents client portal from loading
+        header('Location: ' . admin_url('authentication'));
+        exit;
+        
         parent::__construct();
-        
-        // Block client authentication - redirect to admin login
-        redirect(site_url());
-        
         hooks()->do_action('clients_authentication_constructor', $this);
     }
 
     public function index()
     {
         // Block client authentication - redirect to admin login
-        redirect(site_url());
+        redirect(admin_url('authentication'));
     }
 
     // Added for backward compatibilies
@@ -29,7 +30,7 @@ class Authentication extends ClientsController
     public function login()
     {
         // Block client authentication - redirect to admin login
-        redirect(site_url());
+        redirect(admin_url('authentication'));
         
         if (is_client_logged_in()) {
             redirect(site_url());

@@ -147,19 +147,20 @@ if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'add_kb_an
 /**
  * @deprecated 2.2.0
  * Fallback for auth clients area, changed in version 2.2.0
+ * Blocked - redirect to admin authentication
  */
-$route['clients/reset_password']  = 'authentication/reset_password';
-$route['clients/forgot_password'] = 'authentication/forgot_password';
-$route['clients/logout']          = 'authentication/logout';
-$route['clients/register']        = 'authentication/register';
-$route['clients/login']           = 'authentication/login';
+$route['clients/reset_password']  = 'home';
+$route['clients/forgot_password'] = 'home';
+$route['clients/logout']          = 'home';
+$route['clients/register']        = 'home';
+$route['clients/login']           = 'home';
 
-// Aliases for short routes
-$route['reset_password']  = 'authentication/reset_password';
-$route['forgot_password'] = 'authentication/forgot_password';
-$route['login']           = 'authentication/login';
-$route['logout']          = 'authentication/logout';
-$route['register']        = 'authentication/register';
+// Aliases for short routes - Blocked, redirect to admin authentication
+$route['reset_password']  = 'home';
+$route['forgot_password'] = 'home';
+$route['login']           = 'home';
+$route['logout']          = 'home';
+$route['register']        = 'home';
 
 /**
  * Terms and conditions and Privacy Policy routes
@@ -177,6 +178,16 @@ $route['admin/modules/(:any)/(:any)'] = 'admin/mods/$1/$2';
 
 // Public single ticket route
 $route['forms/tickets/(:any)'] = 'forms/public_ticket/$1';
+
+/**
+ * Block all client authentication routes - redirect to admin authentication
+ */
+$route['authentication/login'] = 'home';
+$route['authentication/logout'] = 'home';
+$route['authentication/register'] = 'home';
+$route['authentication/forgot_password'] = 'home';
+$route['authentication/reset_password'] = 'home';
+$route['authentication/reset_password/(:any)'] = 'home';
 
 /**
  * @since  2.3.0
