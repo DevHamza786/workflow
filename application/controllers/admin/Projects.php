@@ -108,7 +108,21 @@ class Projects extends AdminController
             }
         } else {
             $data['project']                               = $this->projects_model->get($id);
-            $data['project']->settings->available_features = unserialize($data['project']->settings->available_features);
+            // Safely unserialize available_features with error handling
+            $available_features_value = $data['project']->settings->available_features ?? '';
+            if (!empty($available_features_value) && is_string($available_features_value)) {
+                $unserialized = @unserialize($available_features_value);
+                if ($unserialized === false && $available_features_value !== serialize(false)) {
+                    // Try JSON decode as fallback
+                    $unserialized = json_decode($available_features_value, true);
+                    if ($unserialized === null && json_last_error() !== JSON_ERROR_NONE) {
+                        $unserialized = [];
+                    }
+                }
+                $data['project']->settings->available_features = is_array($unserialized) ? $unserialized : [];
+            } else {
+                $data['project']->settings->available_features = [];
+            }
 
             $data['project_members'] = $this->projects_model->get_project_members($id);
             $title                   = _l('edit', _l('project'));
@@ -121,8 +135,24 @@ class Projects extends AdminController
         $data['last_project_settings'] = $this->projects_model->get_last_project_settings();
 
         if (count($data['last_project_settings'])) {
-            $key                                          = array_search('available_features', array_column($data['last_project_settings'], 'name'));
-            $data['last_project_settings'][$key]['value'] = unserialize($data['last_project_settings'][$key]['value']);
+            $key = array_search('available_features', array_column($data['last_project_settings'], 'name'));
+            if ($key !== false && isset($data['last_project_settings'][$key]['value'])) {
+                // Safely unserialize with error handling
+                $setting_value = $data['last_project_settings'][$key]['value'] ?? '';
+                if (!empty($setting_value) && is_string($setting_value)) {
+                    $unserialized = @unserialize($setting_value);
+                    if ($unserialized === false && $setting_value !== serialize(false)) {
+                        // Try JSON decode as fallback
+                        $unserialized = json_decode($setting_value, true);
+                        if ($unserialized === null && json_last_error() !== JSON_ERROR_NONE) {
+                            $unserialized = [];
+                        }
+                    }
+                    $data['last_project_settings'][$key]['value'] = is_array($unserialized) ? $unserialized : [];
+                } else {
+                    $data['last_project_settings'][$key]['value'] = [];
+                }
+            }
         }
 
         $data['settings'] = $this->projects_model->get_settings();
@@ -194,7 +224,21 @@ class Projects extends AdminController
                 blank_page(_l('project_not_found'));
             }
 
-            $project->settings->available_features = unserialize($project->settings->available_features);
+            // Safely unserialize available_features with error handling
+            $available_features_value = $project->settings->available_features ?? '';
+            if (!empty($available_features_value) && is_string($available_features_value)) {
+                $unserialized = @unserialize($available_features_value);
+                if ($unserialized === false && $available_features_value !== serialize(false)) {
+                    // Try JSON decode as fallback
+                    $unserialized = json_decode($available_features_value, true);
+                    if ($unserialized === null && json_last_error() !== JSON_ERROR_NONE) {
+                        $unserialized = [];
+                    }
+                }
+                $project->settings->available_features = is_array($unserialized) ? $unserialized : [];
+            } else {
+                $project->settings->available_features = [];
+            }
             $data['statuses']                      = $this->projects_model->get_project_statuses();
 
             $group = !$this->input->get('group') ? 'project_overview' : $this->input->get('group');
@@ -967,7 +1011,21 @@ class Projects extends AdminController
             $project    = $this->projects_model->get($project_id);
             $item['id'] = 0;
 
-            $default_tax     = unserialize(get_option('default_tax'));
+            // Safely unserialize default_tax with error handling
+            $default_tax_value = get_option('default_tax');
+            if (!empty($default_tax_value) && is_string($default_tax_value)) {
+                $unserialized = @unserialize($default_tax_value);
+                if ($unserialized === false && $default_tax_value !== serialize(false)) {
+                    // Try JSON decode as fallback
+                    $unserialized = json_decode($default_tax_value, true);
+                    if ($unserialized === null && json_last_error() !== JSON_ERROR_NONE) {
+                        $unserialized = [];
+                    }
+                }
+                $default_tax = is_array($unserialized) ? $unserialized : [];
+            } else {
+                $default_tax = [];
+            }
             $item['taxname'] = $default_tax;
 
             $tasks = $this->input->post('tasks');
