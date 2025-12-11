@@ -235,7 +235,22 @@ class Projects_model extends App_Model
                 foreach ($settings as $key => $setting) {
                     if ($setting['name'] == 'available_features') {
                         $available_features_index = $key;
-                        $available_features = unserialize($setting['value']);
+                        // Check if value is valid serialized data before unserializing
+                        $setting_value = $setting['value'] ?? '';
+                        if (!empty($setting_value) && is_string($setting_value)) {
+                            $available_features = @unserialize($setting_value);
+                            // Check if unserialize was successful
+                            if ($available_features === false && $setting_value !== serialize(false)) {
+                                // If unserialize failed, try to decode as JSON (fallback)
+                                $available_features = json_decode($setting_value, true);
+                                if ($available_features === null && json_last_error() !== JSON_ERROR_NONE) {
+                                    // If both fail, use empty array
+                                    $available_features = [];
+                                }
+                            }
+                        } else {
+                            $available_features = [];
+                        }
                         if (is_array($available_features)) {
                             foreach ($available_features as $name => $avf) {
                                 $settings_available_features[] = $name;
@@ -257,7 +272,26 @@ class Projects_model extends App_Model
                         if (!in_array($tab, $settings_available_features)) {
                             if ($available_features_index) {
                                 $current_available_features_settings = $settings[$available_features_index];
-                                $tmp = unserialize($current_available_features_settings['value']);
+                                // Check if value is valid serialized data before unserializing
+                                $setting_value = $current_available_features_settings['value'] ?? '';
+                                if (!empty($setting_value) && is_string($setting_value)) {
+                                    $tmp = @unserialize($setting_value);
+                                    // Check if unserialize was successful
+                                    if ($tmp === false && $setting_value !== serialize(false)) {
+                                        // If unserialize failed, try to decode as JSON (fallback)
+                                        $tmp = json_decode($setting_value, true);
+                                        if ($tmp === null && json_last_error() !== JSON_ERROR_NONE) {
+                                            // If both fail, use empty array
+                                            $tmp = [];
+                                        }
+                                    }
+                                } else {
+                                    $tmp = [];
+                                }
+                                // Ensure $tmp is an array
+                                if (!is_array($tmp)) {
+                                    $tmp = [];
+                                }
                                 $tmp[$tab] = 1;
                                 $this->db->where('id', $current_available_features_settings['id']);
                                 $this->db->update(db_prefix() . 'project_settings', ['value' => serialize($tmp)]);
