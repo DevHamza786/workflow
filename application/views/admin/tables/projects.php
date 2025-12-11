@@ -110,19 +110,29 @@ return App_table::find('projects')
             $row[] = e(_d($aRow['deadline']));
 
             $membersOutput = '<div class="tw-flex -tw-space-x-1">';
-            $members       = explode(',', $aRow['members']);
+            // Handle null values for members - convert to empty string before explode
+            $members_string = $aRow['members'] ?? '';
+            $members       = !empty($members_string) ? explode(',', $members_string) : [];
             $exportMembers = '';
             foreach ($members as $key => $member) {
                 if ($member != '') {
-                    $members_ids = explode(',', $aRow['members_ids']);
-                    $member_id   = $members_ids[$key];
-                    $membersOutput .= '<a href="' . admin_url('profile/' . $member_id) . '">' .
-                        staff_profile_image($member_id, [
-                            'tw-inline-block tw-h-7 tw-w-7 tw-rounded-full tw-ring-2 tw-ring-white',
-                        ], 'small', [
-                            'data-toggle' => 'tooltip',
-                            'data-title'  => $member,
-                        ]) . '</a>';
+                    // Handle null values for members_ids - convert to empty string before explode
+                    $members_ids_string = $aRow['members_ids'] ?? '';
+                    $members_ids = !empty($members_ids_string) ? explode(',', $members_ids_string) : [];
+                    $member_id   = isset($members_ids[$key]) && !empty($members_ids[$key]) ? $members_ids[$key] : '';
+                    
+                    if (!empty($member_id)) {
+                        $membersOutput .= '<a href="' . admin_url('profile/' . $member_id) . '">' .
+                            staff_profile_image($member_id, [
+                                'tw-inline-block tw-h-7 tw-w-7 tw-rounded-full tw-ring-2 tw-ring-white',
+                            ], 'small', [
+                                'data-toggle' => 'tooltip',
+                                'data-title'  => $member,
+                            ]) . '</a>';
+                    } else {
+                        // Fallback if member_id is not available
+                        $membersOutput .= '<span class="tw-inline-block tw-h-7 tw-w-7 tw-rounded-full tw-bg-neutral-200" data-toggle="tooltip" data-title="' . e($member) . '"></span>';
+                    }
                     // For exporting
                     $exportMembers .= $member . ', ';
                 }
