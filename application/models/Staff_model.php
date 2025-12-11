@@ -413,10 +413,27 @@ class Staff_model extends App_Model
 
         $data['admin'] = 0;
 
-        if (is_admin()) {
-            if (isset($data['administrator'])) {
+        // Always unset administrator field as it doesn't exist in database
+        // The database uses 'admin' column instead
+        if (isset($data['administrator'])) {
+            if (is_admin() && $data['administrator']) {
                 $data['admin'] = 1;
-                unset($data['administrator']);
+                // If admin is checked, clear role
+                $data['role'] = null;
+            } else {
+                // If admin is not checked, ensure admin is 0
+                $data['admin'] = 0;
+                // Handle role field - convert empty string to null
+                if (isset($data['role']) && ($data['role'] === '' || $data['role'] === '0')) {
+                    $data['role'] = null;
+                }
+            }
+            unset($data['administrator']);
+        } else {
+            // If administrator field not set, ensure admin is 0 and handle role
+            $data['admin'] = 0;
+            if (isset($data['role']) && ($data['role'] === '' || $data['role'] === '0')) {
+                $data['role'] = null;
             }
         }
 
@@ -522,10 +539,13 @@ class Staff_model extends App_Model
 
         $data = hooks()->apply_filters('before_update_staff_member', $data, $id);
 
-        if (is_admin()) {
-            if (isset($data['administrator'])) {
+        // Always unset administrator field as it doesn't exist in database
+        // The database uses 'admin' column instead
+        if (isset($data['administrator'])) {
+            if (is_admin() && $data['administrator']) {
                 $data['admin'] = 1;
-                unset($data['administrator']);
+                // If admin is checked, clear role
+                $data['role'] = null;
             } else {
                 if ($id != get_staff_user_id()) {
                     if ($id == 1) {
@@ -538,7 +558,32 @@ class Staff_model extends App_Model
                         'cant_remove_yourself_from_admin' => true,
                     ];
                 }
+                // If admin is not checked, ensure admin is 0 and handle role
                 $data['admin'] = 0;
+                // Handle role field - convert empty string to null
+                if (isset($data['role']) && ($data['role'] === '' || $data['role'] === '0')) {
+                    $data['role'] = null;
+                }
+            }
+            unset($data['administrator']);
+        } else {
+            // If administrator field not set, ensure admin is 0 and handle role
+            if (is_admin()) {
+                if ($id != get_staff_user_id()) {
+                    if ($id == 1) {
+                        return [
+                            'cant_remove_main_admin' => true,
+                        ];
+                    }
+                } else {
+                    return [
+                        'cant_remove_yourself_from_admin' => true,
+                    ];
+                }
+            }
+            $data['admin'] = 0;
+            if (isset($data['role']) && ($data['role'] === '' || $data['role'] === '0')) {
+                $data['role'] = null;
             }
         }
 

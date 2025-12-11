@@ -578,24 +578,6 @@ class Tasks_model extends App_Model
             }
         }
 
-        // Final safety check: Convert any remaining arrays to strings before insert
-        // This prevents "Array to string conversion" errors
-        foreach ($data as $key => $value) {
-            if (is_array($value)) {
-                // If it's an array, convert to comma-separated string
-                $data[$key] = implode(',', array_filter($value, function($v) {
-                    return $v !== '' && $v !== null;
-                }));
-                // If empty after filtering, remove it
-                if (empty($data[$key])) {
-                    unset($data[$key]);
-                }
-            } elseif (is_object($value)) {
-                // If it's an object, remove it (shouldn't be in database)
-                unset($data[$key]);
-            }
-        }
-
         $this->db->insert(db_prefix() . 'tasks', $data);
         $insert_id = $this->db->insert_id();
         if ($insert_id) {

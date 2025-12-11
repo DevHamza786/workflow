@@ -717,7 +717,18 @@ echo ' hide';
                             }
                             $("select[name='milestone']").selectpicker('refresh');
 
-                            $("#assignees").html(project.assignees);
+                            // Extract only the option elements from the returned HTML
+                            // render_select returns full form group HTML with label, but we only need the select options
+                            var assigneesTemp = $('<div>').html(project.assignees);
+                            var assigneesSelect = assigneesTemp.find('select');
+                            if (assigneesSelect.length > 0) {
+                                // Extract only the inner HTML (options) from the select element
+                                $("#assignees").html(assigneesSelect.html());
+                            } else {
+                                // Fallback: if structure is different, try direct assignment
+                                $("#assignees").html(project.assignees);
+                            }
+                            
                             if (typeof(_current_member) != 'undefined') {
                                 $("#assignees").val(_current_member);
                             }

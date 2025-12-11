@@ -169,6 +169,17 @@ function app_init_admin_sidebar_menu_items()
         'badge'    => [],
     ]);
 
+    // Staff - KEEP
+    if (staff_can('view',  'staff')) {
+        $CI->app_menu->add_sidebar_menu_item('staff', [
+            'name'     => _l('als_staff'),
+            'href'     => admin_url('staff'),
+            'icon'     => 'fa-regular fa-user',
+            'position' => 40,
+            'badge'    => [],
+        ]);
+    }
+
     // Support - Commented out
     /*
     if ((!is_staff_member() && get_option('access_tickets_to_none_staff_members') == 1) || is_staff_member()) {

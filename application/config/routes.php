@@ -51,7 +51,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 |       my-controller/my-method -> my_controller/my_method
 */
 
-$route['default_controller']   = 'clients';
+$route['default_controller']   = 'home';
 $route['404_override']         = '';
 $route['translate_uri_dashes'] = false;
 
@@ -59,6 +59,11 @@ $route['translate_uri_dashes'] = false;
  * Dashboard clean route
  */
 $route['admin'] = 'admin/dashboard';
+
+/**
+ * Admin authentication route
+ */
+$route['admin/authentication'] = 'admin/authentication/admin';
 
 /**
  * Misc controller routes

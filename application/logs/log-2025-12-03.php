@@ -135,3 +135,9 @@ ERROR - 2025-12-03 19:05:45 --> Could not find the language line "features"
 ERROR - 2025-12-03 19:09:07 --> Severity: Warning --> Undefined array key "full_name" C:\laragon\www\workflows\application\views\admin\tasks\view_task_template.php 1094
 ERROR - 2025-12-03 19:09:07 --> Severity: Warning --> Undefined array key "full_name" C:\laragon\www\workflows\application\views\admin\tasks\view_task_template.php 1094
 ERROR - 2025-12-03 19:09:07 --> Severity: Warning --> Undefined array key "full_name" C:\laragon\www\workflows\application\views\admin\tasks\view_task_template.php 1094
+ERROR - 2025-12-03 19:16:13 --> Severity: Warning --> Undefined array key "full_name" C:\laragon\www\workflows\application\views\admin\tasks\view_task_template.php 1094
+ERROR - 2025-12-03 19:16:13 --> Severity: Warning --> Undefined array key "full_name" C:\laragon\www\workflows\application\views\admin\tasks\view_task_template.php 1094
+ERROR - 2025-12-03 19:16:13 --> Severity: Warning --> Undefined array key "full_name" C:\laragon\www\workflows\application\views\admin\tasks\view_task_template.php 1094
+ERROR - 2025-12-03 19:17:20 --> Severity: Warning --> Undefined array key "full_name" C:\laragon\www\workflows\application\views\admin\tasks\view_task_template.php 1094
+ERROR - 2025-12-03 19:17:20 --> Severity: Warning --> Undefined array key "full_name" C:\laragon\www\workflows\application\views\admin\tasks\view_task_template.php 1094
+ERROR - 2025-12-03 19:17:20 --> Severity: Warning --> Undefined array key "full_name" C:\laragon\www\workflows\application\views\admin\tasks\view_task_template.php 1094
