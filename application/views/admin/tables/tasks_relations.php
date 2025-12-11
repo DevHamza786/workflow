@@ -37,7 +37,18 @@ return App_table::find('related_tasks')
         }
 
         if (!$this->ci->input->post('tasks_related_to')) {
-            array_push($where, 'AND rel_id="' . $this->ci->db->escape_str($rel_id) . '" AND rel_type="' . $this->ci->db->escape_str($rel_type) . '"');
+            // Default: Show tasks related to the customer directly OR through projects
+            if ($rel_type == 'customer') {
+                // Include tasks directly related to customer AND tasks from customer's projects
+                array_push($where, 'AND (
+                    (rel_id="' . $this->ci->db->escape_str($rel_id) . '" AND rel_type="customer")
+                    OR
+                    (rel_id IN (SELECT id FROM ' . db_prefix() . 'projects WHERE clientid=' . $this->ci->db->escape_str($rel_id) . ') AND rel_type="project")
+                )');
+            } else {
+                // For other relation types, use exact match
+                array_push($where, 'AND rel_id="' . $this->ci->db->escape_str($rel_id) . '" AND rel_type="' . $this->ci->db->escape_str($rel_type) . '"');
+            }
         } else {
             // Used in the customer profile filters
             $tasks_related_to = explode(',', $this->ci->input->post('tasks_related_to'));
@@ -75,6 +86,11 @@ return App_table::find('related_tasks')
         }
 
         $join = [];
+
+        // Initialize customFieldsColumns if not set
+        if (!isset($customFieldsColumns) || !is_array($customFieldsColumns)) {
+            $customFieldsColumns = [];
+        }
 
         $custom_fields = get_table_custom_fields('tasks');
 
