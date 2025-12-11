@@ -16,11 +16,21 @@ class Clients extends ClientsController
     {
         parent::__construct();
 
+        // Block client portal access - only admin/staff allowed
+        if (!is_staff_logged_in()) {
+            redirect(site_url());
+        }
+
         hooks()->do_action('after_clients_area_init', $this);
     }
 
     public function index()
     {
+        // Block client portal access - redirect to admin
+        if (!is_staff_logged_in()) {
+            redirect(site_url());
+        }
+        
         $data['is_home'] = true;
         $this->load->model('reports_model');
         $data['payments_years'] = $this->reports_model->get_distinct_customer_invoices_years();

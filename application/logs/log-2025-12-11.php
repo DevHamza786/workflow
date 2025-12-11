@@ -22,3 +22,4 @@ ERROR - 2025-12-11 17:27:21 --> Could not find the language line "admin"
 ERROR - 2025-12-11 17:27:25 --> Could not find the language line "features"
 ERROR - 2025-12-11 17:28:07 --> Could not find the language line "admin"
 ERROR - 2025-12-11 17:28:17 --> Could not find the language line "features"
+ERROR - 2025-12-11 12:49:02 --> Severity: error --> Exception: Access denied for user 'workflowsynergyg_crm_user'@'localhost' (using password: YES) C:\laragon\www\workflows\system\database\drivers\mysqli\mysqli_driver.php 203

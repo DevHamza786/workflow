@@ -7,12 +7,17 @@ class Authentication extends ClientsController
     public function __construct()
     {
         parent::__construct();
+        
+        // Block client authentication - redirect to admin login
+        redirect(site_url());
+        
         hooks()->do_action('clients_authentication_constructor', $this);
     }
 
     public function index()
     {
-        $this->login();
+        // Block client authentication - redirect to admin login
+        redirect(site_url());
     }
 
     // Added for backward compatibilies
@@ -23,6 +28,9 @@ class Authentication extends ClientsController
 
     public function login()
     {
+        // Block client authentication - redirect to admin login
+        redirect(site_url());
+        
         if (is_client_logged_in()) {
             redirect(site_url());
         }
