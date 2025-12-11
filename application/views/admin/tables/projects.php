@@ -30,6 +30,11 @@ return App_table::find('projects')
         ];
 
         $where  = [];
+        
+        // Initialize customFieldsColumns if not set
+        if (!isset($customFieldsColumns) || !is_array($customFieldsColumns)) {
+            $customFieldsColumns = [];
+        }
 
         if ($filtersWhere = $this->getWhereFromRules()) {
             $where[] = $filtersWhere;

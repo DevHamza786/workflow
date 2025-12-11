@@ -603,6 +603,14 @@ class App_table
 
     public function output($params = [])
     {
+        // Clear any previous output to ensure clean JSON response
+        if (ob_get_level() > 0) {
+            ob_clean();
+        }
+        
+        // Set JSON header
+        header('Content-Type: application/json');
+        
         $params = apply_filters_deprecated('table_params', [$params, $this->viewPath], '3.0.7', 'table_[TABLE_ID]_output_params');
         $params = hooks()->apply_filters('table_' . $this->id() . '_output_params', $params);
 
@@ -612,7 +620,20 @@ class App_table
 
         $params = array_merge(["customFieldsColumns" => []], $params);
 
-        echo json_encode($closure($params, $this->rules()));
+        try {
+            $result = $closure($params, $this->rules());
+            echo json_encode($result);
+        } catch (Exception $e) {
+            // Log error and return error response
+            log_message('error', 'App_table output error: ' . $e->getMessage());
+            echo json_encode([
+                'draw' => intval($this->ci->input->post('draw', true) ?: 0),
+                'recordsTotal' => 0,
+                'recordsFiltered' => 0,
+                'data' => [],
+                'error' => 'An error occurred while loading table data. Please check server logs.'
+            ]);
+        }
         die();
     }
 }
