@@ -17,8 +17,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 * environments.
 *
 */
-define('APP_BASE_URL', 'http://workflows.test/');
-// define('APP_BASE_URL', 'https://workflow.synergygroup.com.pk/');
+// define('APP_BASE_URL', 'http://workflows.test/');
+define('APP_BASE_URL', 'https://workflow.synergygroup.com.pk/');
 
 /*
 * --------------------------------------------------------------------------
@@ -44,20 +44,20 @@ define('APP_DB_HOSTNAME', 'localhost');
 /**
  * The username used to connect to the database
  */
-define('APP_DB_USERNAME', 'root');
-// define('APP_DB_USERNAME', 'workflowsynergyg_crm_user');
+// define('APP_DB_USERNAME', 'root');
+define('APP_DB_USERNAME', 'workflowsynergyg_crm_user');
 
 /**
  * The password used to connect to the database
  */
-define('APP_DB_PASSWORD', '');
-// define('APP_DB_PASSWORD', 'nU,h3U@xFWrxd)(D');
+// define('APP_DB_PASSWORD', '');
+define('APP_DB_PASSWORD', 'nU,h3U@xFWrxd)(D');
 
 /**
  * The name of the database you want to connect to
  */
-define('APP_DB_NAME', 'workflow');
-// define('APP_DB_NAME', 'workflowsynergyg_crm_db');
+// define('APP_DB_NAME', 'workflow');
+define('APP_DB_NAME', 'workflowsynergyg_crm_db');
 
 /**
  * @since  2.3.0
