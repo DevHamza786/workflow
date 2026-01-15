@@ -1,0 +1,23 @@
+# Logs
+/application/logs/
+/application/logs/*.php
+
+# Cache
+/application/cache/
+
+# Temporary files
+*.tmp
+*.temp
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Config files with sensitive data
+/application/config/app-config.php

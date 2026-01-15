@@ -238,3 +238,78 @@ ERROR - 2026-01-15 15:59:25 --> Could not find the language line "search_tasks"
 ERROR - 2026-01-15 16:02:49 --> Could not find the language line "search_tasks"
 ERROR - 2026-01-15 16:02:52 --> Could not find the language line "search_tasks"
 ERROR - 2026-01-15 16:02:54 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 11:16:10 --> Severity: error --> Exception: Plugin 'mysql_native_password' is not loaded C:\laragon\www\workflows\system\database\drivers\mysqli\mysqli_driver.php 203
+ERROR - 2026-01-15 16:20:15 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 16:20:16 --> Could not find the language line "admin"
+ERROR - 2026-01-15 16:20:19 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 16:20:20 --> Could not find the language line "admin"
+ERROR - 2026-01-15 16:20:28 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 16:20:38 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 16:20:46 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 16:25:10 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 16:35:48 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 16:38:54 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 16:38:55 --> Could not find the language line "admin"
+ERROR - 2026-01-15 16:41:51 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 16:41:51 --> Could not find the language line "total_staff"
+ERROR - 2026-01-15 16:45:54 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 16:45:54 --> Could not find the language line "total_staff"
+ERROR - 2026-01-15 17:06:39 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 17:06:39 --> Could not find the language line "total_staff"
+ERROR - 2026-01-15 17:06:39 --> Severity: Warning --> Undefined variable $project_status C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 47
+ERROR - 2026-01-15 17:06:39 --> Severity: Warning --> Trying to access array offset on null C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 47
+ERROR - 2026-01-15 17:06:39 --> Severity: Warning --> Undefined variable $total_projects_in_progress C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 51
+ERROR - 2026-01-15 17:06:39 --> Severity: Warning --> Undefined variable $total_projects C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 52
+ERROR - 2026-01-15 17:06:39 --> Severity: Warning --> Undefined variable $project_status C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 58
+ERROR - 2026-01-15 17:06:39 --> Severity: Warning --> Trying to access array offset on null C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 58
+ERROR - 2026-01-15 17:06:39 --> Severity: Warning --> Undefined variable $percent_in_progress_projects C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 59
+ERROR - 2026-01-15 17:06:39 --> Severity: Warning --> Undefined variable $percent_in_progress_projects C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 61
+ERROR - 2026-01-15 17:06:42 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 17:06:42 --> Could not find the language line "total_staff"
+ERROR - 2026-01-15 17:06:42 --> Severity: Warning --> Undefined variable $project_status C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 47
+ERROR - 2026-01-15 17:06:42 --> Severity: Warning --> Trying to access array offset on null C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 47
+ERROR - 2026-01-15 17:06:42 --> Severity: Warning --> Undefined variable $total_projects_in_progress C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 51
+ERROR - 2026-01-15 17:06:42 --> Severity: Warning --> Undefined variable $total_projects C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 52
+ERROR - 2026-01-15 17:06:42 --> Severity: Warning --> Undefined variable $project_status C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 58
+ERROR - 2026-01-15 17:06:42 --> Severity: Warning --> Trying to access array offset on null C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 58
+ERROR - 2026-01-15 17:06:42 --> Severity: Warning --> Undefined variable $percent_in_progress_projects C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 59
+ERROR - 2026-01-15 17:06:42 --> Severity: Warning --> Undefined variable $percent_in_progress_projects C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 61
+ERROR - 2026-01-15 17:06:59 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 17:07:00 --> Could not find the language line "admin"
+ERROR - 2026-01-15 17:12:11 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 17:12:11 --> Could not find the language line "total_staff"
+ERROR - 2026-01-15 17:12:11 --> Severity: Warning --> Undefined variable $project_status C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 47
+ERROR - 2026-01-15 17:12:11 --> Severity: Warning --> Trying to access array offset on null C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 47
+ERROR - 2026-01-15 17:12:11 --> Severity: Warning --> Undefined variable $total_projects_in_progress C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 51
+ERROR - 2026-01-15 17:12:11 --> Severity: Warning --> Undefined variable $total_projects C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 52
+ERROR - 2026-01-15 17:12:11 --> Severity: Warning --> Undefined variable $project_status C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 58
+ERROR - 2026-01-15 17:12:11 --> Severity: Warning --> Trying to access array offset on null C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 58
+ERROR - 2026-01-15 17:12:11 --> Severity: Warning --> Undefined variable $percent_in_progress_projects C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 59
+ERROR - 2026-01-15 17:12:11 --> Severity: Warning --> Undefined variable $percent_in_progress_projects C:\laragon\www\workflows\application\views\admin\dashboard\widgets\top_stats.php 61
+ERROR - 2026-01-15 17:13:01 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 17:13:01 --> Could not find the language line "total_staff"
+ERROR - 2026-01-15 17:13:01 --> Could not find the language line "total_admins"
+ERROR - 2026-01-15 17:17:34 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 17:17:34 --> Could not find the language line "total_staff"
+ERROR - 2026-01-15 17:17:34 --> Could not find the language line "total_admins"
+ERROR - 2026-01-15 17:18:32 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 17:18:32 --> Could not find the language line "total_staff"
+ERROR - 2026-01-15 17:18:32 --> Could not find the language line "total_admins"
+ERROR - 2026-01-15 17:21:16 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 17:21:16 --> Could not find the language line "total_staff"
+ERROR - 2026-01-15 17:21:16 --> Could not find the language line "total_admins"
+ERROR - 2026-01-15 17:22:30 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 17:22:30 --> Could not find the language line "total_staff"
+ERROR - 2026-01-15 17:22:30 --> Could not find the language line "total_admins"
+ERROR - 2026-01-15 17:25:13 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 17:25:13 --> Could not find the language line "Total Staff"
+ERROR - 2026-01-15 17:25:13 --> Could not find the language line "Total Admins"
+ERROR - 2026-01-15 17:25:54 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 17:25:54 --> Could not find the language line "Total Staff"
+ERROR - 2026-01-15 17:25:54 --> Could not find the language line "Total Admins"
+ERROR - 2026-01-15 17:28:08 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 17:28:08 --> Could not find the language line "Total Staff"
+ERROR - 2026-01-15 17:28:08 --> Could not find the language line "Total Admins"
+ERROR - 2026-01-15 17:29:35 --> Could not find the language line "search_tasks"
+ERROR - 2026-01-15 17:29:35 --> Could not find the language line "Total Staff"
+ERROR - 2026-01-15 17:29:35 --> Could not find the language line "Total Admins"

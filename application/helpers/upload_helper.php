@@ -930,12 +930,27 @@ function handle_favicon_upload()
             // Setup our new file path
             $filename    = 'favicon' . '.' . $extension;
             $newFilePath = $path . $filename;
-            _maybe_create_upload_path($path);
+            
+            // Create directory with proper permissions
+            if (!_maybe_create_upload_path($path)) {
+                log_message('error', 'Failed to create upload path for favicon: ' . $path);
+                return false;
+            }
+            
+            // Check if file already exists and is writable
+            if (file_exists($newFilePath) && !is_writable($newFilePath)) {
+                log_message('error', 'Favicon file exists but is not writable: ' . $newFilePath);
+                return false;
+            }
+            
             // Upload the file into the company uploads dir
             if (move_uploaded_file($tmpFilePath, $newFilePath)) {
                 update_option('favicon', $filename);
-
+                log_message('info', 'Favicon uploaded successfully: ' . $newFilePath);
                 return true;
+            } else {
+                log_message('error', 'Failed to move uploaded favicon file from ' . $tmpFilePath . ' to ' . $newFilePath);
+                return false;
             }
         }
     }
@@ -1274,9 +1289,28 @@ function _file_attachments_index_fix($index_name)
 function _maybe_create_upload_path($path)
 {
     if (!file_exists($path)) {
-        mkdir($path, 0755);
-        fopen(rtrim($path, '/') . '/' . 'index.html', 'w');
+        if (!mkdir($path, 0755, true)) {
+            log_message('error', 'Failed to create upload directory: ' . $path);
+            return false;
+        }
+        // Create index.html file for security
+        $indexFile = rtrim($path, '/') . '/' . 'index.html';
+        if (!file_exists($indexFile)) {
+            $fp = fopen($indexFile, 'w');
+            if ($fp) {
+                fwrite($fp, '<html><head><title>403 Forbidden</title></head><body><h1>403 Forbidden</h1></body></html>');
+                fclose($fp);
+            }
+        }
     }
+    
+    // Check if directory is writable
+    if (!is_writable($path)) {
+        log_message('error', 'Upload directory is not writable: ' . $path);
+        return false;
+    }
+    
+    return true;
 }
 
 /**

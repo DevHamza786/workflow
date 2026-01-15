@@ -165,25 +165,6 @@
                         <li class="header-edit-profile"><a
                                 href="<?php echo admin_url('staff/edit_profile'); ?>"><?php echo _l('nav_edit_profile'); ?></a>
                         </li>
-                        <?php if (!is_language_disabled()) { ?>
-                        <li class="dropdown-submenu pull-left header-languages">
-                            <a href="#" tabindex="-1"><?php echo _l('language'); ?></a>
-                            <ul class="dropdown-menu dropdown-menu">
-                                <li class="<?php echo $current_user->default_language == '' ? 'active' : ''; ?>">
-                                    <a href="<?php echo admin_url('staff/change_language'); ?>">
-                                        <?php echo _l('system_default_string'); ?>
-                                    </a>
-                                </li>
-                                <?php foreach ($this->app->get_available_languages() as $user_lang) { ?>
-                                <li
-                                    class="<?php echo $current_user->default_language == $user_lang ? 'active' : ''; ?>">
-                                    <a href="<?php echo admin_url('staff/change_language/' . $user_lang); ?>">
-                                        <?php echo e(ucfirst($user_lang)); ?>
-                                    </a>
-                                    <?php } ?>
-                            </ul>
-                        </li>
-                        <?php } ?>
                         <li class="header-logout">
                             <a href="#" onclick="logout(); return false;"><?php echo _l('nav_logout'); ?></a>
                         </li>

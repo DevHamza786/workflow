@@ -2,97 +2,59 @@
 <div class="widget relative" id="widget-<?php echo create_widget_id(); ?>" data-name="<?php echo _l('quick_stats'); ?>">
     <div class="widget-dragger"></div>
     <div class="row">
-        <?php
-         $initial_column = 'col-lg-3';
-         if (!is_staff_member() && ((staff_cant('view', 'invoices') && staff_cant('view_own', 'invoices') && (get_option('allow_staff_view_invoices_assigned') == 0
-           || (get_option('allow_staff_view_invoices_assigned') == 1 && !staff_has_assigned_invoices()))))) {
-             $initial_column = 'col-lg-6';
-         } elseif (!is_staff_member() || (staff_cant('view', 'invoices') && staff_cant('view_own', 'invoices') && (get_option('allow_staff_view_invoices_assigned') == 1 && !staff_has_assigned_invoices()) || (get_option('allow_staff_view_invoices_assigned') == 0 && (staff_cant('view', 'invoices') && staff_cant('view_own', 'invoices'))))) {
-             $initial_column = 'col-lg-4';
-         }
-      ?>
-        <?php if (staff_can('view',  'invoices') || staff_can('view_own',  'invoices') || (get_option('allow_staff_view_invoices_assigned') == '1' && staff_has_assigned_invoices())) { ?>
-        <div class="quick-stats-invoices col-xs-12 col-md-6 col-sm-6 <?php echo e($initial_column); ?> tw-mb-2 sm:tw-mb-0">
+        <div class="quick-stats-staff col-xs-12 col-md-3 col-sm-6 tw-mb-2 sm:tw-mb-0">
             <div class="top_stats_wrapper">
                 <?php
-                  $total_invoices                          = total_rows(db_prefix() . 'invoices', 'status NOT IN (5,6)' . (staff_cant('view', 'invoices') ? ' AND ' . get_invoices_where_sql_for_staff(get_staff_user_id()) : ''));
-                  $total_invoices_awaiting_payment         = total_rows(db_prefix() . 'invoices', 'status NOT IN (2,5,6)' . (staff_cant('view', 'invoices') ? ' AND ' . get_invoices_where_sql_for_staff(get_staff_user_id()) : ''));
-                  $percent_total_invoices_awaiting_payment = $total_invoices > 0 ? (($total_invoices_awaiting_payment * 100) / $total_invoices) : 0;
-                  $percent_total_invoices_awaiting_payment = number_format($percent_total_invoices_awaiting_payment > 0 && $percent_total_invoices_awaiting_payment < 1 ? ceil($percent_total_invoices_awaiting_payment) : $percent_total_invoices_awaiting_payment, 2)
+                  $total_staff = total_rows(db_prefix() . 'staff', 'active=1');
+                  $total_inactive_staff = total_rows(db_prefix() . 'staff', 'active=0');
+                  $percent_active_staff = ($total_staff > 0 ? number_format(($total_staff * 100) / ($total_staff + $total_inactive_staff), 2) : 0);
                   ?>
                 <div class="tw-text-neutral-800 mtop5 tw-flex tw-items-center tw-justify-between">
                     <div class="tw-font-medium tw-inline-flex text-neutral-600 tw-items-center tw-truncate">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="tw-w-6 tw-h-6 tw-mr-3 rtl:tw-ml-3 tw-text-neutral-600">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
-                        </svg>
+                        <i class="fa fa-users tw-w-30 tw-h-30 tw-mr-3 rtl:tw-ml-3 tw-text-neutral-600 fa-lg"></i>
                         <span class="tw-truncate">
-                            <?php echo _l('invoices_awaiting_payment'); ?>
+                            <?php echo _l('Total Staff'); ?>
                         </span>
                     </div>
                     <span class="tw-font-semibold tw-text-neutral-600 tw-shrink-0">
-                        <?php echo e($total_invoices_awaiting_payment); ?> /
-                        <?php echo e($total_invoices); ?>
+                        <?php echo e($total_staff); ?>
                     </span>
                 </div>
-
-                <div class="progress tw-mb-0 tw-mt-4 progress-bar-mini">
-                    <div class="progress-bar progress-bar-danger no-percent-text not-dynamic" role="progressbar"
-                        aria-valuenow="<?php echo e($percent_total_invoices_awaiting_payment); ?>" aria-valuemin="0"
-                        aria-valuemax="100" style="width: 0%"
-                        data-percent="<?php echo e($percent_total_invoices_awaiting_payment); ?>">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <?php } ?>
-        <?php if (is_staff_member()) { ?>
-        <div class="quick-stats-leads col-xs-12 col-md-6 col-sm-6 <?php echo e($initial_column); ?> tw-mb-2 sm:tw-mb-0">
-            <div class="top_stats_wrapper">
-                <?php
-                  $where = '';
-                  if (!is_admin()) {
-                      $where .= '(addedfrom = ' . get_staff_user_id() . ' OR assigned = ' . get_staff_user_id() . ')';
-                  }
-                  // Junk leads are excluded from total
-                  $total_leads = total_rows(db_prefix() . 'leads', ($where == '' ? 'junk=0' : $where .= ' AND junk =0'));
-                  if ($where == '') {
-                      $where .= 'status=1';
-                  } else {
-                      $where .= ' AND status =1';
-                  }
-                  $total_leads_converted         = total_rows(db_prefix() . 'leads', $where);
-                  $percent_total_leads_converted = ($total_leads > 0 ? number_format(($total_leads_converted * 100) / $total_leads, 2) : 0);
-                  ?>
-                <div class="tw-text-neutral-800 mtop5 tw-flex tw-items-center tw-justify-between">
-                    <div class="tw-font-medium tw-inline-flex text-neutral-600 tw-items-center tw-truncate">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="tw-w-6 tw-h-6 tw-mr-3 rtl:tw-ml-3 tw-text-neutral-600">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
-                        </svg>
-                        <span class="tw-truncate">
-                            <?php echo _l('leads_converted_to_client'); ?>
-                        </span>
-                    </div>
-                    <span class="tw-font-semibold tw-text-neutral-600 tw-shrink-0">
-                        <?php echo e($total_leads_converted); ?> /
-                        <?php echo e($total_leads); ?>
-                    </span>
-                </div>
-
-                <div class="progress tw-mb-0 tw-mt-4 progress-bar-mini">
+                <div class="progress tw-mb-0 tw-mt-2 progress-bar-mini">
                     <div class="progress-bar progress-bar-success no-percent-text not-dynamic" role="progressbar"
-                        aria-valuenow="<?php echo e($percent_total_leads_converted); ?>" aria-valuemin="0"
-                        aria-valuemax="100" style="width: 0%"
-                        data-percent="<?php echo e($percent_total_leads_converted); ?>">
+                        aria-valuenow="<?php echo e($percent_active_staff); ?>" aria-valuemin="0" aria-valuemax="100"
+                        style="width: 0%" data-percent="<?php echo e($percent_active_staff); ?>">
                     </div>
                 </div>
             </div>
         </div>
-        <?php } ?>
-        <div class="quick-stats-projects col-xs-12 col-md-6 col-sm-6 <?php echo e($initial_column); ?> tw-mb-2 sm:tw-mb-0">
+        <div class="quick-stats-admins col-xs-12 col-md-3 col-sm-6 tw-mb-2 sm:tw-mb-0">
+            <div class="top_stats_wrapper">
+                <?php
+                  $total_admins = total_rows(db_prefix() . 'staff', 'admin=1');
+                  $total_users = total_rows(db_prefix() . 'staff', 'admin=0');
+                  $percent_admins = (($total_admins + $total_users) > 0 ? number_format(($total_admins * 100) / ($total_admins + $total_users), 2) : 0);
+                  ?>
+                <div class="tw-text-neutral-800 mtop5 tw-flex tw-items-center tw-justify-between">
+                    <div class="tw-font-medium tw-inline-flex text-neutral-600 tw-items-center tw-truncate">
+                        <i class="fa fa-user tw-w-30 tw-h-30 tw-mr-3 rtl:tw-ml-3 tw-text-neutral-600 fa-la"></i>
+                        <span class="tw-truncate">
+                            <?php echo _l('Total Admins'); ?>
+                        </span>
+                    </div>
+                    <span class="tw-font-semibold tw-text-neutral-600 tw-shrink-0">
+                        <?php echo e($total_admins); ?>
+                    </span>
+                </div>
+                <div class="progress tw-mb-0 tw-mt-2 progress-bar-mini">
+                    <div class="progress-bar progress-bar-warning no-percent-text not-dynamic" role="progressbar"
+                        aria-valuenow="<?php echo e($percent_admins); ?>" aria-valuemin="0" aria-valuemax="100"
+                        style="width: 0%" data-percent="<?php echo e($percent_admins); ?>">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="quick-stats-projects col-xs-12 col-md-3 col-sm-6 tw-mb-2 sm:tw-mb-0">
             <div class="top_stats_wrapper">
                 <?php
                   $_where         = '';
@@ -106,12 +68,8 @@
                   $percent_in_progress_projects = ($total_projects > 0 ? number_format(($total_projects_in_progress * 100) / $total_projects, 2) : 0);
                   ?>
                 <div class="tw-text-neutral-800 mtop5 tw-flex tw-items-center tw-justify-between">
-                    <div class="tw-font-medium tw-inline-flex tw-items-center text-neutral-500 tw-truncate">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="tw-w-6 tw-h-6 tw-mr-3 rtl:tw-ml-3 tw-text-neutral-600">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
-                        </svg>
+                    <div class="tw-font-medium tw-inline-flex text-neutral-500 tw-items-center tw-truncate">
+                        <i class="fa fa-folder-open tw-w-30 tw-h-30 tw-mr-3 rtl:tw-ml-3 tw-text-neutral-600 fa-lg"></i>
                         <span class="tw-truncate">
                             <?php echo e(_l('projects') . ' ' . $project_status['name']); ?>
                         </span>
@@ -122,7 +80,7 @@
                     </span>
                 </div>
 
-                <div class="progress tw-mb-0 tw-mt-5 progress-bar-mini">
+                <div class="progress tw-mb-0 tw-mt-2 progress-bar-mini">
                     <div class="progress-bar no-percent-text not-dynamic"
                         style="background:<?php echo e($project_status['color']); ?>" role="progressbar"
                         aria-valuenow="<?php echo e($percent_in_progress_projects); ?>" aria-valuemin="0"
@@ -132,7 +90,7 @@
                 </div>
             </div>
         </div>
-        <div class="quick-stats-tasks col-xs-12 col-md-6 col-sm-6 <?php echo e($initial_column); ?>">
+        <div class="quick-stats-tasks col-xs-12 col-md-3 col-sm-6 tw-mb-2 sm:tw-mb-0">
             <div class="top_stats_wrapper">
                 <?php
                   $_where = '';
@@ -146,11 +104,7 @@
                   ?>
                 <div class="tw-text-neutral-800 mtop5 tw-flex tw-items-center tw-justify-between">
                     <div class="tw-font-medium tw-inline-flex text-neutral-600 tw-items-center tw-truncate">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="tw-w-6 tw-h-6 tw-mr-3 rtl:tw-ml-3 tw-text-neutral-600">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 019 9v.375M10.125 2.25A3.375 3.375 0 0113.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 013.375 3.375M9 15l2.25 2.25L15 12" />
-                        </svg>
+                        <i class="fa fa-tasks tw-w-30 tw-h-30 tw-mr-3 rtl:tw-ml-3 tw-text-neutral-600 fa-lg"></i>
                         <span class="tw-truncate">
                             <?php echo _l('tasks_not_finished'); ?>
                         </span>
@@ -159,7 +113,7 @@
                         <?php echo e($total_not_finished_tasks); ?> / <?php echo e($total_tasks); ?>
                     </span>
                 </div>
-                <div class="progress tw-mb-0 tw-mt-4 progress-bar-mini">
+                <div class="progress tw-mb-0 tw-mt-2 progress-bar-mini">
                     <div class="progress-bar progress-bar-default no-percent-text not-dynamic" role="progressbar"
                         aria-valuenow="<?php echo e($percent_not_finished_tasks); ?>" aria-valuemin="0" aria-valuemax="100"
                         style="width: 0%" data-percent="<?php echo e($percent_not_finished_tasks); ?>">

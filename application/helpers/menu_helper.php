@@ -314,65 +314,6 @@ function app_init_admin_sidebar_menu_items()
     }
     */
 
-    if (staff_can('view-timesheets', 'reports') || staff_can('view', 'reports')) {
-        $CI->app_menu->add_sidebar_menu_item('reports', [
-            'collapse' => true,
-            'name'     => _l('als_reports'),
-            'href'     => admin_url('reports'),
-            'icon'     => 'fa-regular fa-chart-bar',
-            'position' => 60,
-            'badge'    => [],
-        ]);
-    }
-
-    if (staff_can('view-timesheets', 'reports')) {
-        $CI->app_menu->add_sidebar_children_item('reports', [
-            'slug'     => 'timesheets-reports',
-            'name'     => _l('timesheets_overview'),
-            'href'     => admin_url('staff/timesheets?view=all'),
-            'position' => 25,
-            'badge'    => [],
-        ]);
-    }
-
-    if (staff_can('view',  'reports')) {
-        $CI->app_menu->add_sidebar_children_item('reports', [
-            'slug'     => 'sales-reports',
-            'name'     => _l('als_reports_sales_submenu'),
-            'href'     => admin_url('reports/sales'),
-            'position' => 5,
-            'badge'    => [],
-        ]);
-        $CI->app_menu->add_sidebar_children_item('reports', [
-            'slug'     => 'expenses-reports',
-            'name'     => _l('als_reports_expenses'),
-            'href'     => admin_url('reports/expenses'),
-            'position' => 10,
-            'badge'    => [],
-        ]);
-        $CI->app_menu->add_sidebar_children_item('reports', [
-            'slug'     => 'expenses-vs-income-reports',
-            'name'     => _l('als_expenses_vs_income'),
-            'href'     => admin_url('reports/expenses_vs_income'),
-            'position' => 15,
-            'badge'    => [],
-        ]);
-        $CI->app_menu->add_sidebar_children_item('reports', [
-            'slug'     => 'leads-reports',
-            'name'     => _l('als_reports_leads_submenu'),
-            'href'     => admin_url('reports/leads'),
-            'position' => 20,
-            'badge'    => [],
-        ]);
-        $CI->app_menu->add_sidebar_children_item('reports', [
-            'slug'     => 'knowledge-base-reports',
-            'name'     => _l('als_kb_articles_submenu'),
-            'href'     => admin_url('reports/knowledge_base_articles'),
-            'position' => 30,
-            'badge'    => [],
-        ]);
-    }
-
     // Setup menu
     if (staff_can('view',  'staff')) {
         $CI->app_menu->add_setup_menu_item('staff', [
