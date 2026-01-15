@@ -125,37 +125,10 @@
             <p class="no-margin pull-left mright5">
                 <a href="#" class="btn btn-default mright5" data-toggle="tooltip"
                     data-title="<?php echo _l('task_timesheets'); ?>"
-                    onclick="slideToggle('#task_single_timesheets'); return false;">
+                    onclick="$('#task_single_timesheets').slideToggle(); return false;">
                     <i class="fa fa-th-list"></i>
                 </a>
             </p>
-            <?php if ($task->billed == 0) {
-          $is_assigned = $task->current_user_is_assigned;
-          if (!$this->tasks_model->is_timer_started($task->id)) { ?>
-            <p class="no-margin pull-left" <?php if (!$is_assigned) { ?> data-toggle="tooltip"
-                data-title="<?php echo _l('task_start_timer_only_assignee'); ?>" <?php } ?>>
-                <a href="#" class="mbot10 btn<?php if (!$is_assigned || $task->status == Tasks_model::STATUS_COMPLETE) {
-              echo ' disabled btn-default';
-          } else {
-              echo ' btn-success';
-          } ?>" onclick="timer_action(this, <?php echo e($task->id); ?>); return false;">
-                    <i class="fa-regular fa-clock"></i> <?php echo _l('task_start_timer'); ?>
-                </a>
-            </p>
-            <?php } else { ?>
-            <p class="no-margin pull-left">
-                <a href="#" data-toggle="popover" data-placement="<?php echo is_mobile() ? 'bottom' : 'right'; ?>"
-                    data-html="true" data-trigger="manual" data-title="<?php echo _l('note'); ?>"
-                    data-content='<?php echo render_textarea('timesheet_note'); ?><button type="button" onclick="timer_action(this, <?php echo e($task->id); ?>, <?php echo $this->tasks_model->get_last_timer($task->id)->id; ?>);" class="btn btn-primary btn-sm"><?php echo _l('save'); ?></button>'
-                    class="btn mbot10 btn-danger<?php if (!$is_assigned) {
-              echo ' disabled';
-          } ?>" onclick="return false;">
-                    <i class="fa-regular fa-clock"></i> <?php echo _l('task_stop_timer'); ?>
-                </a>
-            </p>
-            <?php } ?>
-            <?php
-      } ?>
             <div class="clearfix"></div>
             <hr class="hr-10" />
             <div id="task_single_timesheets" class="<?php if (!$this->session->flashdata('task_single_timesheets_open')) {
@@ -390,44 +363,6 @@
                         } ?>
         <div class="clearfix"></div>
         <hr />
-        <a href="#" onclick="add_task_checklist_item('<?php echo e($task->id); ?>', undefined, this); return false"
-            class="mbot10 inline-block">
-            <span class="new-checklist-item"><i class="fa fa-plus-circle"></i>
-                <?php echo _l('add_checklist_item'); ?>
-            </span>
-        </a>
-        <div class="form-group no-mbot checklist-templates-wrapper simple-bootstrap-select task-single-checklist-templates<?php if (count($checklistTemplates) == 0) {
-                            echo ' hide';
-                        }  ?>">
-            <select id="checklist_items_templates" class="selectpicker checklist-items-template-select"
-                data-none-selected-text="<?php echo _l('insert_checklist_templates') ?>" data-width="100%"
-                data-live-search="true">
-                <option value=""></option>
-                <?php foreach ($checklistTemplates as $chkTemplate) { ?>
-                <option value="<?php echo e($chkTemplate['id']); ?>">
-                    <?php echo e($chkTemplate['description']); ?>
-                </option>
-                <?php } ?>
-            </select>
-        </div>
-        <div class="clearfix"></div>
-        <p class="hide text-muted no-margin" id="task-no-checklist-items">
-            <?php echo _l('task_no_checklist_items_found'); ?></p>
-        <div class="row checklist-items-wrapper">
-            <div class="col-md-12 ">
-                <div id="checklist-items">
-                    <?php $this->load->view(
-                            'admin/tasks/checklist_items_template',
-                            [
-                       'task_id'                 => $task->id,
-                       'current_user_is_creator' => $task->current_user_is_creator,
-                       'checklists'              => $task->checklist_items, ]
-                        );
-                       ?>
-                </div>
-            </div>
-            <div class="clearfix"></div>
-        </div>
         <?php if (count($task->attachments) > 0) { ?>
         <div class="row task_attachments_wrapper">
             <div class="col-md-12" id="attachments">
@@ -807,126 +742,8 @@
                 <?php } ?>
             </h5>
         </div>
-        <div class="task-info task-info-priority">
-            <h5 class="tw-inline-flex tw-items-center tw-space-x-1.5">
-                <i class="fa fa-bolt fa-fw fa-lg task-info-icon pull-left"></i>
-                <?php echo _l('task_single_priority'); ?>:
-                <?php if (staff_can('edit',  'tasks') && $task->status != Tasks_model::STATUS_COMPLETE) { ?>
-                <span class="task-single-menu task-menu-priority">
-                    <span class="trigger pointer manual-popover text-has-action"
-                        style="color:<?php echo e(task_priority_color($task->priority)); ?>;">
-                        <?php echo e(task_priority($task->priority)); ?>
-                    </span>
-                    <span class="content-menu hide">
-                        <ul>
-                            <?php
-                           foreach (get_tasks_priorities() as $priority) { ?>
-                            <?php if ($task->priority != $priority['id']) { ?>
-                            <li>
-                                <a href="#"
-                                    onclick="task_change_priority(<?php echo e($priority['id']); ?>,<?php echo e($task->id); ?>); return false;"
-                                    class="tw-block">
-                                    <?php echo e($priority['name']); ?>
-                                </a>
-                            </li>
-                            <?php } ?>
-                            <?php } ?>
-                        </ul>
-                    </span>
-                </span>
-                <?php } else { ?>
-                <span style="color:<?php echo e(task_priority_color($task->priority)); ?>;">
-                    <?php echo e(task_priority($task->priority)); ?>
-                </span>
-                <?php } ?>
-            </h5>
-        </div>
-        <?php if ($task->current_user_is_creator || staff_can('edit',  'tasks')) { ?>
-        <div class="task-info task-info-hourly-rate">
-            <h5 class="tw-inline-flex tw-items-center tw-space-x-1.5">
-                <i class="fa-regular fa-clock fa-fw fa-lg task-info-icon pull-left"></i>
-                <?php echo _l('task_hourly_rate'); ?>: <span class="tw-text-neutral-800">
-                    <?php if ($task->rel_type == 'project' && $task->project_data->billing_type == 2) {
-                               echo e(app_format_number($task->project_data->project_rate_per_hour));
-                           } else {
-                               echo e(app_format_number($task->hourly_rate));
-                           }
-                  ?>
-                </span>
-            </h5>
-        </div>
-        <div class="task-info task-info-billable">
-            <h5 class="tw-inline-flex tw-items-center tw-space-x-1.5">
-                <i class="fa fa-credit-card fa-fw fa-lg task-info-icon pull-left"></i>
-                <?php echo _l('task_billable'); ?>: <span class="tw-text-neutral-800">
-                    <?php echo($task->billable == 1 ? _l('task_billable_yes') : _l('task_billable_no')) ?>
-                    <?php if ($task->billable == 1) { ?>
-                    <b>(<?php echo($task->billed == 1 ? _l('task_billed_yes') : _l('task_billed_no')) ?>)</b>
-                    <?php } ?>
-                </span>
-            </h5>
-            <?php if ($task->rel_type == 'project' && $task->project_data->billing_type == 1) {
-                      echo '<br /><span class="tw-ml-5 tw-text-sm">(' . _l('project') . ' ' . _l('project_billing_type_fixed_cost') . ')</span>';
-                  } ?>
-        </div>
-        <?php if ($task->billable == 1
-            && $task->billed == 0
-            && ($task->rel_type != 'project' || ($task->rel_type == 'project' && $task->project_data->billing_type != 1))
-            && staff_can('create', 'invoices')) { ?>
-        <div class="task-info task-billable-amount">
-            <h5 class="tw-inline-flex tw-items-center tw-space-x-1.5">
-                <i class="fa fa-regular fa-file-lines fa-fw fa-lg pull-left task-info-icon"></i>
-                <?php echo _l('billable_amount'); ?>:
-                <span class="tw-font-semibold tw-text-neutral-800">
-                    <?php echo e($this->tasks_model->get_billable_amount($task->id)); ?>
-                </span>
-            </h5>
-        </div>
-        <?php } ?>
-        <?php } ?>
-        <?php if ($task->current_user_is_assigned || total_rows(db_prefix() . 'taskstimers', ['task_id' => $task->id, 'staff_id' => get_staff_user_id()]) > 0) { ?>
-        <div class="task-info task-info-user-logged-time">
-            <h5 class="tw-inline-flex tw-items-center">
-                <i class="fa fa-asterisk task-info-icon fa-fw fa-lg" aria-hidden="true"></i>
-                <span class="tw-text-neutral-800">
-                    <?php echo _l('task_user_logged_time'); ?>
-                    <?php echo e(seconds_to_time_format($this->tasks_model->calc_task_total_time($task->id, ' AND staff_id=' . get_staff_user_id()))); ?>
-                </span>
-            </h5>
-        </div>
-        <?php } ?>
-        <?php if (staff_can('create',  'tasks')) { ?>
-        <div class="task-info task-info-total-logged-time">
-            <h5 class="tw-inline-flex tw-items-center tw-space-x-1.5">
-                <i
-                    class="fa-regular fa-clock fa-fw fa-lg task-info-icon"></i><?php echo _l('task_total_logged_time'); ?>
-                <span class="text-success">
-                    <?php echo e(seconds_to_time_format($this->tasks_model->calc_task_total_time($task->id))); ?>
-                </span>
-            </h5>
-        </div>
-        <?php } ?>
-        <?php $custom_fields = get_custom_fields('tasks');
-            foreach ($custom_fields as $field) { ?>
-        <?php $value = get_custom_field_value($task->id, $field['id'], 'tasks');
-            if ($value == '') {
-                continue;
-            }?>
-        <div class="task-info">
-            <h5
-                class="task-info-custom-field tw-inline-flex tw-items-center tw-space-x-1.5 task-info-custom-field-<?php echo e($field['id']); ?>">
-                <i class="fa-regular fa-circle fa-fw fa-lg task-info-icon"></i>
-                <?php echo e($field['name']); ?>: <span class="tw-text-neutral-800"><?php echo $value; ?></span>
-            </h5>
-        </div>
-        <?php } ?>
         <?php if (staff_can('create',  'tasks') || staff_can('edit',  'tasks')) { ?>
         <div class="mtop10 clearfix"></div>
-        <div id="inputTagsWrapper" class="taskSingleTasks task-info-tags-edit">
-            <input type="text" class="tagsinput" id="taskTags" data-taskid="<?php echo e($task->id); ?>"
-                value="<?php echo prep_tags_input(get_tags_in($task->id, 'task')); ?>" data-role="tagsinput">
-        </div>
-        <div class="clearfix"></div>
         <?php } else { ?>
         <div class="mtop5 clearfix"></div>
         <?php echo render_tags(get_tags_in($task->id, 'task')); ?>

@@ -167,11 +167,15 @@
 </div>
 <?php init_tail(); ?>
 <style>
-/* Hide Contracts links in client table row-options */
+/* Hide Contracts and Contacts links in client table row-options */
 .table-clients .row-options a[href*="contracts"],
+.table-clients .row-options a[href*="contacts"],
 .table-clients .row-options a[href*="group=contracts"],
+.table-clients .row-options a[href*="group=contacts"],
 .table-clients .row-options a:contains("Contracts"),
-.table-clients .row-options a:contains("contracts") {
+.table-clients .row-options a:contains("contracts"),
+.table-clients .row-options a:contains("Contacts"),
+.table-clients .row-options a:contains("contacts") {
     display: none !important;
 }
 </style>
@@ -180,7 +184,7 @@ $(function() {
     var tAPI = initDataTable('.table-clients', admin_url + 'clients/table', [0], [0], {},
         <?php echo hooks()->apply_filters('customers_table_default_order', json_encode([2, 'asc'])); ?>);
     
-    // Remove Contracts option from row-options hover menu after table is drawn
+    // Remove Contracts and Contacts option from row-options hover menu after table is drawn
     if (tAPI) {
         function removeContractsLinks() {
             $('.table-clients .row-options').each(function() {
@@ -188,34 +192,44 @@ $(function() {
                 var html = $rowOptions.html();
                 var originalHtml = html;
                 
-                // Method 1: Remove via jQuery - find and remove Contracts links directly
+                // Method 1: Remove via jQuery - find and remove Contracts and Contacts links directly
                 $rowOptions.find('a').each(function() {
                     var $link = $(this);
                     var href = $link.attr('href') || '';
                     var text = $link.text().toLowerCase();
                     
                     if (href.indexOf('contracts') !== -1 || 
+                        href.indexOf('contacts') !== -1 ||
                         href.indexOf('group=contracts') !== -1 || 
-                        text.indexOf('contracts') !== -1) {
+                        href.indexOf('group=contacts') !== -1 ||
+                        text.indexOf('contracts') !== -1 ||
+                        text.indexOf('contacts') !== -1) {
                         $link.remove();
                     }
                 });
                 
                 // Method 2: Remove via regex patterns
-                // Pattern 1: Links with "group=contracts" in URL
+                // Pattern 1: Links with "group=contracts" or "group=contacts" in URL
                 html = html.replace(/\s*\|\s*<a[^>]*group=contracts[^>]*>.*?<\/a>/gi, '');
                 html = html.replace(/<a[^>]*group=contracts[^>]*>.*?<\/a>\s*\|\s*/gi, '');
+                html = html.replace(/\s*\|\s*<a[^>]*group=contacts[^>]*>.*?<\/a>/gi, '');
+                html = html.replace(/<a[^>]*group=contacts[^>]*>.*?<\/a>\s*\|\s*/gi, '');
                 
-                // Pattern 2: Links with "contracts" in href
+                // Pattern 2: Links with "contracts" or "contacts" in href
                 html = html.replace(/\s*\|\s*<a[^>]*href[^>]*contracts[^>]*>.*?<\/a>/gi, '');
                 html = html.replace(/<a[^>]*href[^>]*contracts[^>]*>.*?<\/a>\s*\|\s*/gi, '');
+                html = html.replace(/\s*\|\s*<a[^>]*href[^>]*contacts[^>]*>.*?<\/a>/gi, '');
+                html = html.replace(/<a[^>]*href[^>]*contacts[^>]*>.*?<\/a>\s*\|\s*/gi, '');
                 
-                // Pattern 3: Links containing "Contracts" in text
+                // Pattern 3: Links containing "Contracts" or "Contacts" in text
                 html = html.replace(/\s*\|\s*<a[^>]*>.*?contracts.*?<\/a>/gi, '');
                 html = html.replace(/<a[^>]*>.*?contracts.*?<\/a>\s*\|\s*/gi, '');
+                html = html.replace(/\s*\|\s*<a[^>]*>.*?contacts.*?<\/a>/gi, '');
+                html = html.replace(/<a[^>]*>.*?contacts.*?<\/a>\s*\|\s*/gi, '');
                 
-                // Pattern 4: Any link with "contracts" anywhere
+                // Pattern 4: Any link with "contracts" or "contacts" anywhere
                 html = html.replace(/<a[^>]*contracts[^>]*>.*?<\/a>/gi, '');
+                html = html.replace(/<a[^>]*contacts[^>]*>.*?<\/a>/gi, '');
                 
                 // Clean up separators
                 html = html.replace(/\|\s*\|+/g, '|');
@@ -235,8 +249,11 @@ $(function() {
                     var text = $link.text().toLowerCase();
                     
                     if (href.indexOf('contracts') !== -1 || 
+                        href.indexOf('contacts') !== -1 ||
                         href.indexOf('group=contracts') !== -1 || 
-                        text.indexOf('contracts') !== -1) {
+                        href.indexOf('group=contacts') !== -1 ||
+                        text.indexOf('contracts') !== -1 ||
+                        text.indexOf('contacts') !== -1) {
                         $link.hide().css('display', 'none');
                     }
                 });

@@ -53,7 +53,7 @@ class Tasks_model extends App_Model
             ],
             [
                 'id'             => static::STATUS_TESTING,
-                'color'          => '#0284c7',
+                'color'          => '#ef4444',
                 'name'           => _l('task_status_3'),
                 'order'          => 3,
                 'filter_default' => true,
@@ -69,14 +69,24 @@ class Tasks_model extends App_Model
                 'id'             => static::STATUS_COMPLETE,
                 'color'          => '#22c55e',
                 'name'           => _l('task_status_5'),
-                'order'          => 100,
-                'filter_default' => false,
+                'order'          => 5,
+                'filter_default' => true,
+            ],
+            [
+                'id'             => 6,
+                'color'          => '#10b981',
+                'name'           => _l('task_status_finished'),
+                'order'          => 6,
+                'filter_default' => true,
             ],
         ]);
 
         usort($statuses, function ($a, $b) {
             return $a['order'] - $b['order'];
         });
+
+        // Debug: Force refresh of task statuses
+        $statuses = hooks()->apply_filters('task_statuses', $statuses);
 
         return $statuses;
     }

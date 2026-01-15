@@ -98,10 +98,7 @@ return App_table::find('clients')
                 $company .= ' | <a href="' . admin_url('clients/confirm_registration/' . $aRow['userid']) . '" class="text-success bold">' . _l('confirm_registration') . '</a>';
             }
 
-            if (!$isPerson) {
-                $company .= ' | <a href="' . admin_url('clients/client/' . $aRow['userid'] . '?group=contacts') . '">' . _l('customer_contacts') . '</a>';
-            }
-
+            
             if ($hasPermissionDelete) {
                 $company .= ' | <a href="' . admin_url('clients/delete/' . $aRow['userid']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
             }
@@ -150,13 +147,13 @@ return App_table::find('clients')
             
             $row = hooks()->apply_filters('customers_table_row_data', $row, $aRow);
             
-            // Remove Contracts option from row-options hover menu
+            // Remove Contracts and Contacts options from row-options hover menu
             if (isset($row[2]) && is_string($row[2])) { // $row[2] contains the company HTML
-                // Method 1: Extract row-options div and filter out Contracts links
+                // Method 1: Extract row-options div and filter out Contracts and Contacts links
                 if (preg_match('/<div class="row-options">(.*?)<\/div>/is', $row[2], $matches)) {
                     $rowOptionsContent = $matches[1];
                     
-                    // Split by pipe separator and filter out Contracts links
+                    // Split by pipe separator and filter out Contracts and Contacts links
                     $links = preg_split('/\s*\|\s*/', $rowOptionsContent);
                     $filteredLinks = [];
                     
@@ -166,11 +163,14 @@ return App_table::find('clients')
                             continue;
                         }
                         
-                        // Check if this link is related to Contracts - skip it
-                        // Check for "contracts" anywhere in the link (href, text, etc.)
+                        // Check if this link is related to Contracts or Contacts - skip it
+                        // Check for "contracts" or "contacts" anywhere in the link (href, text, etc.)
                         if (stripos($link, 'contracts') !== false || 
+                            stripos($link, 'contacts') !== false ||
                             preg_match('/contracts/i', $link) ||
-                            preg_match('/group=contracts/i', $link)) {
+                            preg_match('/contacts/i', $link) ||
+                            preg_match('/group=contracts/i', $link) ||
+                            preg_match('/group=contacts/i', $link)) {
                             continue;
                         }
                         
@@ -189,14 +189,14 @@ return App_table::find('clients')
                     $row[2] = preg_replace('/<div class="row-options">.*?<\/div>/is', $newRowOptions, $row[2]);
                 }
                 
-                // Method 2: Additional cleanup using regex (catches any remaining Contracts links)
-                // Remove links with "contracts" or "group=contracts" in href
-                $row[2] = preg_replace('/\s*\|\s*<a[^>]*[\'"](?:.*contracts|.*group=contracts)[^>]*>.*?<\/a>/i', '', $row[2]);
-                $row[2] = preg_replace('/<a[^>]*[\'"](?:.*contracts|.*group=contracts)[^>]*>.*?<\/a>\s*\|\s*/i', '', $row[2]);
+                // Method 2: Additional cleanup using regex (catches any remaining Contracts and Contacts links)
+                // Remove links with "contracts", "contacts", "group=contracts", or "group=contacts" in href
+                $row[2] = preg_replace('/\s*\|\s*<a[^>]*[\'"](?:.*contracts|.*contacts|.*group=contracts|.*group=contacts)[^>]*>.*?<\/a>/i', '', $row[2]);
+                $row[2] = preg_replace('/<a[^>]*[\'"](?:.*contracts|.*contacts|.*group=contracts|.*group=contacts)[^>]*>.*?<\/a>\s*\|\s*/i', '', $row[2]);
                 
-                // Remove links containing "Contracts" in the text
-                $row[2] = preg_replace('/\s*\|\s*<a[^>]*>.*?contracts.*?<\/a>/i', '', $row[2]);
-                $row[2] = preg_replace('/<a[^>]*>.*?contracts.*?<\/a>\s*\|\s*/i', '', $row[2]);
+                // Remove links containing "Contracts" or "Contacts" in the text
+                $row[2] = preg_replace('/\s*\|\s*<a[^>]*>.*?(contracts|contacts).*?<\/a>/i', '', $row[2]);
+                $row[2] = preg_replace('/<a[^>]*>.*?(contracts|contacts).*?<\/a>\s*\|\s*/i', '', $row[2]);
                 
                 // Final cleanup of separators
                 $row[2] = preg_replace('/\s*\|\s*\|+/', ' |', $row[2]);
@@ -208,14 +208,17 @@ return App_table::find('clients')
             $output['aaData'][] = $row;
         }
         
-        // Final pass: Remove Contracts from all rows in output (catches anything added after hooks)
+        // Final pass: Remove Contracts and Contacts from all rows in output (catches anything added after hooks)
         if (isset($output['aaData']) && is_array($output['aaData'])) {
             foreach ($output['aaData'] as &$rowData) {
                 if (isset($rowData[2]) && is_string($rowData[2])) {
-                    // Final removal of Contracts links
+                    // Final removal of Contracts and Contacts links
                     $rowData[2] = preg_replace('/<a[^>]*contracts[^>]*>.*?<\/a>/i', '', $rowData[2]);
+                    $rowData[2] = preg_replace('/<a[^>]*contacts[^>]*>.*?<\/a>/i', '', $rowData[2]);
                     $rowData[2] = preg_replace('/<a[^>]*group=contracts[^>]*>.*?<\/a>/i', '', $rowData[2]);
+                    $rowData[2] = preg_replace('/<a[^>]*group=contacts[^>]*>.*?<\/a>/i', '', $rowData[2]);
                     $rowData[2] = preg_replace('/<a[^>]*>.*?contracts.*?<\/a>/i', '', $rowData[2]);
+                    $rowData[2] = preg_replace('/<a[^>]*>.*?contacts.*?<\/a>/i', '', $rowData[2]);
                     $rowData[2] = preg_replace('/\s*\|\s*\|+/', ' |', $rowData[2]);
                     $rowData[2] = preg_replace('/\|\s*$/', '', $rowData[2]);
                     $rowData[2] = preg_replace('/^\s*\|/', '', $rowData[2]);

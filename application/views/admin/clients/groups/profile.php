@@ -91,34 +91,6 @@
                         <div id="company_exists_info" class="hide"></div>
                         <?php hooks()->do_action('after_customer_profile_company_field', $client ?? null); ?>
                         <?php /*
-                        <?php if (get_option('company_requires_vat_number_field') == 1) {
-                      $value = (isset($client) ? $client->vat : '');
-                      echo render_input('vat', 'client_vat_number', $value);
-                  } ?>
-                        */ ?>
-                        <?php hooks()->do_action('before_customer_profile_phone_field', $client ?? null); ?>
-                        <?php $value = (isset($client) ? $client->phonenumber : ''); ?>
-                        <?php echo render_input('phonenumber', 'client_phonenumber', $value); ?>
-                        <?php hooks()->do_action('after_customer_profile_company_phone', $client ?? null); ?>
-                        <?php if ((isset($client) && empty($client->website)) || !isset($client)) {
-                      $value = (isset($client) ? $client->website : '');
-                      echo render_input('website', 'client_website', $value);
-                  } else { ?>
-                        <div class="form-group">
-                            <label for="website"><?php echo _l('client_website'); ?></label>
-                            <div class="input-group">
-                                <input type="text" name="website" id="website" value="<?php echo e($client->website); ?>"
-                                    class="form-control">
-                                <span class="input-group-btn">
-                                    <a href="<?php echo e(maybe_add_http($client->website)); ?>" class="btn btn-default"
-                                        target="_blank" tabindex="-1">
-                                        <i class="fa fa-globe"></i></a>
-                                </span>
-
-                            </div>
-                        </div>
-                        <?php } ?>
-                        <?php /*
                      $selected = [];
                      if (isset($customer_groups)) {
                          foreach ($customer_groups as $group) {

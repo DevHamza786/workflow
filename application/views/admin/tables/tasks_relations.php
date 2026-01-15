@@ -20,7 +20,6 @@ return App_table::find('related_tasks')
             'duedate',
             get_sql_select_task_asignees_full_names() . ' as assignees',
             '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'tasks.id and rel_type="task" ORDER by tag_order ASC) as tags',
-            'priority',
         ];
 
         $sIndexColumn = 'id';
@@ -87,32 +86,13 @@ return App_table::find('related_tasks')
 
         $join = [];
 
-        // Initialize customFieldsColumns if not set
-        if (!isset($customFieldsColumns) || !is_array($customFieldsColumns)) {
-            $customFieldsColumns = [];
-        }
-
-        $custom_fields = get_table_custom_fields('tasks');
-
-        foreach ($custom_fields as $key => $field) {
-            $selectAs = (is_cf_date($field) ? 'date_picker_cvalue_' . $key : 'cvalue_' . $key);
-            array_push($customFieldsColumns, $selectAs);
-            array_push($aColumns, '(SELECT value FROM ' . db_prefix() . 'customfieldsvalues WHERE ' . db_prefix() . 'customfieldsvalues.relid=' . db_prefix() . 'tasks.id AND ' . db_prefix() . 'customfieldsvalues.fieldid=' . $field['id'] . ' AND ' . db_prefix() . 'customfieldsvalues.fieldto="' . $field['fieldto'] . '" LIMIT 1) as ' . $selectAs);
-        }
-
         $aColumns = hooks()->apply_filters('tasks_related_table_sql_columns', $aColumns);
-
-        // Fix for big queries. Some hosting have max_join_limit
-        if (count($custom_fields) > 4) {
-            @$this->ci->db->query('SET SQL_BIG_SELECTS=1');
-        }
 
         $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
             'billed',
             'recurring',
             '(SELECT staffid FROM ' . db_prefix() . 'task_assigned WHERE taskid=' . db_prefix() . 'tasks.id AND staffid=' . get_staff_user_id() . ') as is_assigned',
             get_sql_select_task_assignees_ids() . ' as assignees_ids',
-            '(SELECT MAX(id) FROM ' . db_prefix() . 'taskstimers WHERE task_id=' . db_prefix() . 'tasks.id and staff_id=' . get_staff_user_id() . ' and end_time IS NULL) as not_finished_timer_by_current_staff',
             '(SELECT staffid FROM ' . db_prefix() . 'task_assigned WHERE taskid=' . db_prefix() . 'tasks.id AND staffid=' . get_staff_user_id() . ') as current_user_is_assigned',
             '(SELECT CASE WHEN addedfrom=' . get_staff_user_id() . ' AND is_added_from_contact=0 THEN 1 ELSE 0 END) as current_user_is_creator',
         ]);
@@ -223,38 +203,8 @@ return App_table::find('related_tasks')
 
             $row[] = render_tags($aRow['tags']);
 
-            $outputPriority = '<span style="color:' . e(task_priority_color($aRow['priority'])) . ';" class="inline-block">' . e(task_priority($aRow['priority']));
-
-            if (staff_can('edit',  'tasks') && $aRow['status'] != Tasks_model::STATUS_COMPLETE) {
-                $outputPriority .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
-                $outputPriority .= '<a href="#" style="font-size:14px;vertical-align:middle;" class="dropdown-toggle text-dark" id="tableTaskPriority-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
-                $outputPriority .= '<span data-toggle="tooltip" title="' . _l('task_single_priority') . '"><i class="fa-solid fa-chevron-down"></i></span>';
-                $outputPriority .= '</a>';
-
-                $outputPriority .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tableTaskPriority-' . $aRow['id'] . '">';
-                foreach ($tasksPriorities as $priority) {
-                    if ($aRow['priority'] != $priority['id']) {
-                        $outputPriority .= '<li>
-                  <a href="#" onclick="task_change_priority(' . $priority['id'] . ',' . $aRow['id'] . '); return false;">
-                     ' . e($priority['name']) . '
-                  </a>
-               </li>';
-                    }
-                }
-                $outputPriority .= '</ul>';
-                $outputPriority .= '</div>';
-            }
-
-            $outputPriority .= '</span>';
-            $row[] = $outputPriority;
-
-            // Custom fields add values
-            foreach ($customFieldsColumns as $customFieldColumn) {
-                $row[] = (strpos($customFieldColumn, 'date_picker_') !== false ? _d($aRow[$customFieldColumn]) : $aRow[$customFieldColumn]);
-            }
-
-
             $row['DT_RowClass'] = 'has-row-options';
+
 
             if ((!empty($aRow['duedate']) && $aRow['duedate'] < date('Y-m-d')) && $aRow['status'] != Tasks_model::STATUS_COMPLETE) {
                 $row['DT_RowClass'] .= ' danger';

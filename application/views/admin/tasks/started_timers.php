@@ -53,13 +53,6 @@ foreach ($startedTimers as $timer) {
     echo $data;
     $i++;
 }
-// You can't start multiple blank timers
-if ($noTimersWithoutTask
-    && !(get_option('auto_stop_tasks_timers_on_new_timer') == 1
-        && total_rows(db_prefix() . 'taskstimers', 'staff_id=' . get_staff_user_id() . ' AND end_time IS NULL') > 0)
-    ) {
-    echo '<button class="tw-mt-3 text-center btn btn-primary started-timers-button  btn-sm top-dropdown-btn" onclick="timer_action(this,0); return false;"><i class="fa-regular fa-clock"></i> ' . _l('task_start_timer') . '</button>';
-}
 
 if (is_admin()) {
     echo '<div class="text-center tw-mt-1 view-all-timesheets">';

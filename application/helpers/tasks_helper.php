@@ -301,24 +301,12 @@ function init_relation_tasks_table($table_attributes = [], $filtersWrapperId = '
             ],
         ],
         _l('tags'),
-        _l('tasks_list_priority'),
     ];
 
     array_unshift($table_data, [
         'name'     => '<span class="hide"> - </span><div class="checkbox mass_select_all_wrap"><input type="checkbox" id="mass_select_all" data-to-table="rel-tasks"><label></label></div>',
         'th_attrs' => ['class' => ($table_attributes['data-new-rel-type'] !== 'project' ? 'not_visible' : '')],
     ]);
-
-    $custom_fields = get_custom_fields('tasks', [
-        'show_on_table' => 1,
-    ]);
-
-    foreach ($custom_fields as $field) {
-        array_push($table_data, [
-           'name'     => $field['name'],
-           'th_attrs' => ['data-type' => $field['type'], 'data-custom-field' => 1],
-       ]);
-    }
 
     $table_data = hooks()->apply_filters('tasks_related_table_columns', $table_data);
 
@@ -333,10 +321,13 @@ function init_relation_tasks_table($table_attributes = [], $filtersWrapperId = '
     $CI         = &get_instance();
     $table_name = '.table-' . $name;
 
-    $CI->load->view('admin/tasks/filters', [
-        'tasks_table'=>$tasks_table,
-        'filters_wrapper_id'=>$filtersWrapperId,
-    ]);
+    // Remove filters for customer type
+    if ($table_attributes['data-new-rel-type'] != 'customer') {
+        $CI->load->view('admin/tasks/filters', [
+            'tasks_table'=>$tasks_table,
+            'filters_wrapper_id'=>$filtersWrapperId,
+        ]);
+    }
 
     if (staff_can('create',  'tasks')) {
         $disabled   = '';
@@ -349,13 +340,6 @@ function init_relation_tasks_table($table_attributes = [], $filtersWrapperId = '
                 $disabled = ' disabled';
             }
         }
-        // projects have button on top
-        if ($table_attributes['data-new-rel-type'] != 'project') {
-            echo "<a href='#' class='btn btn-primary pull-left mright5 new-task-relation" . $disabled . "' onclick=\"new_task_from_relation('$table_name'); return false;\" data-rel-id='" . $table_attributes['data-new-rel-id'] . "' data-rel-type='" . $table_attributes['data-new-rel-type'] . "'><i class=\"fa-regular fa-plus tw-mr-1\"></i>" . _l('new_task') . '</a>';
-        }
-    }
-
-    if ($table_attributes['data-new-rel-type'] == 'project') {
         echo "<a href='" . admin_url('tasks/list_tasks?project_id=' . $table_attributes['data-new-rel-id'] . '&kanban=true') . "' class='btn btn-default mright5 mbot15 hidden-xs' data-toggle='tooltip' data-title='" . _l('view_kanban') . "' data-placement='top'><i class='fa-solid fa-grip-vertical'></i></a>";
         echo "<a href='" . admin_url('tasks/detailed_overview?project_id=' . $table_attributes['data-new-rel-id']) . "' class='btn btn-success pull-rigsht mbot15'>" . _l('detailed_overview') . '</a>';
         echo '<div class="clearfix"></div>';
@@ -420,7 +404,7 @@ function init_relation_tasks_table($table_attributes = [], $filtersWrapperId = '
     }
     $table_attributes['id'] = 'related_tasks';
 
-    $table .= render_datatable($table_data, $name, ['number-index-1'], $table_attributes);
+    $table .= render_datatable($table_data, $name, [], $table_attributes);
 
     return $table;
 }

@@ -483,8 +483,6 @@ echo ' hide';
                             </div>
                         </div>
                         */ ?>
-                        <?php $rel_id_custom_field = (isset($task) ? $task->id : false); ?>
-                        <?php echo render_custom_fields('tasks', $rel_id_custom_field); ?>
                         <hr />
                         <p class="bold"><?php echo _l('task_add_edit_description'); ?></p>
                         <?php

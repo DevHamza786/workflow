@@ -18,8 +18,6 @@ return App_table::find('tasks')
             'startdate',
             'duedate',
             get_sql_select_task_asignees_full_names() . ' as assignees',
-            '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'tasks.id and rel_type="task" ORDER by tag_order ASC) as tags',
-            'priority',
         ];
 
         $sIndexColumn = 'id';
@@ -43,20 +41,7 @@ return App_table::find('tasks')
 
         array_push($where, 'AND CASE WHEN rel_type="project" AND rel_id IN (SELECT project_id FROM ' . db_prefix() . 'project_settings WHERE project_id=rel_id AND name="hide_tasks_on_main_tasks_table" AND value=1) THEN rel_type != "project" ELSE 1=1 END');
 
-        $custom_fields = get_table_custom_fields('tasks');
-
-        foreach ($custom_fields as $key => $field) {
-            $selectAs = (is_cf_date($field) ? 'date_picker_cvalue_' . $key : 'cvalue_' . $key);
-            array_push($customFieldsColumns, $selectAs);
-            array_push($aColumns, '(SELECT value FROM ' . db_prefix() . 'customfieldsvalues WHERE ' . db_prefix() . 'customfieldsvalues.relid=' . db_prefix() . 'tasks.id AND ' . db_prefix() . 'customfieldsvalues.fieldid=' . $field['id'] . ' AND ' . db_prefix() . 'customfieldsvalues.fieldto="' . $field['fieldto'] . '" LIMIT 1) as ' . $selectAs);
-        }
-
         $aColumns = hooks()->apply_filters('tasks_table_sql_columns', $aColumns);
-
-        // Fix for big queries. Some hosting have max_join_limit
-        if (count($custom_fields) > 4) {
-            @$this->ci->db->query('SET SQL_BIG_SELECTS=1');
-        }
 
         $result = data_tables_init(
             $aColumns,
@@ -72,7 +57,6 @@ return App_table::find('tasks')
                 'billed',
                 '(SELECT staffid FROM ' . db_prefix() . 'task_assigned WHERE taskid=' . db_prefix() . 'tasks.id AND staffid=' . get_staff_user_id() . ') as is_assigned',
                 get_sql_select_task_assignees_ids() . ' as assignees_ids',
-                '(SELECT MAX(id) FROM ' . db_prefix() . 'taskstimers WHERE task_id=' . db_prefix() . 'tasks.id and staff_id=' . get_staff_user_id() . ' and end_time IS NULL) as not_finished_timer_by_current_staff',
                 '(SELECT staffid FROM ' . db_prefix() . 'task_assigned WHERE taskid=' . db_prefix() . 'tasks.id AND staffid=' . get_staff_user_id() . ') as current_user_is_assigned',
                 '(SELECT CASE WHEN addedfrom=' . get_staff_user_id() . ' AND is_added_from_contact=0 THEN 1 ELSE 0 END) as current_user_is_creator',
             ]
@@ -90,10 +74,6 @@ return App_table::find('tasks')
 
             $outputName = '';
 
-            if ($aRow['not_finished_timer_by_current_staff']) {
-                $outputName .= '<span class="pull-left text-danger"><i class="fa-regular fa-clock fa-fw tw-mr-1"></i></span>';
-            }
-
             $outputName .= '<a href="' . admin_url('tasks/view/' . $aRow['id']) . '" class="display-block main-tasks-table-href-name' . (!empty($aRow['rel_id']) ? ' mbot5' : '') . '" onclick="init_task_modal(' . $aRow['id'] . '); return false;">' . e($aRow['task_name']) . '</a>';
 
             if ($aRow['rel_name']) {
@@ -109,30 +89,6 @@ return App_table::find('tasks')
             }
 
             $outputName .= '<div class="row-options">';
-
-            $class = 'text-success bold';
-            $style = '';
-
-            $tooltip = '';
-            if ($aRow['billed'] == 1 || !$aRow['is_assigned'] || $aRow['status'] == Tasks_model::STATUS_COMPLETE) {
-                $class = 'text-dark disabled';
-                $style = 'style="opacity:0.6;cursor: not-allowed;"';
-                if ($aRow['status'] == Tasks_model::STATUS_COMPLETE) {
-                    $tooltip = ' data-toggle="tooltip" data-title="' . e(format_task_status($aRow['status'], false, true)) . '"';
-                } elseif ($aRow['billed'] == 1) {
-                    $tooltip = ' data-toggle="tooltip" data-title="' . _l('task_billed_cant_start_timer') . '"';
-                } elseif (!$aRow['is_assigned']) {
-                    $tooltip = ' data-toggle="tooltip" data-title="' . _l('task_start_timer_only_assignee') . '"';
-                }
-            }
-
-            if ($aRow['not_finished_timer_by_current_staff']) {
-                $outputName .= '<a href="#" class="text-danger tasks-table-stop-timer" onclick="timer_action(this,' . $aRow['id'] . ',' . $aRow['not_finished_timer_by_current_staff'] . '); return false;">' . _l('task_stop_timer') . '</a>';
-            } else {
-                $outputName .= '<span' . $tooltip . ' ' . $style . '>
-        <a href="#" class="' . $class . ' tasks-table-start-timer" onclick="timer_action(this,' . $aRow['id'] . '); return false;">' . _l('task_start_timer') . '</a>
-        </span>';
-            }
 
             if ($hasPermissionEdit) {
                 $outputName .= '<span class="tw-text-neutral-300"> | </span><a href="#" onclick="edit_task(' . $aRow['id'] . '); return false">' . _l('edit') . '</a>';
@@ -183,38 +139,6 @@ return App_table::find('tasks')
 
             $row[] = format_members_by_ids_and_names($aRow['assignees_ids'], $aRow['assignees']);
 
-            $row[] = render_tags($aRow['tags']);
-
-            $outputPriority = '<span style="color:' . e(task_priority_color($aRow['priority'])) . ';" class="inline-block">' . e(task_priority($aRow['priority']));
-
-            if (staff_can('edit',  'tasks') && $aRow['status'] != Tasks_model::STATUS_COMPLETE) {
-                $outputPriority .= '<div class="dropdown inline-block mleft5 table-export-exclude">';
-                $outputPriority .= '<a href="#" style="font-size:14px;vertical-align:middle;" class="dropdown-toggle text-dark" id="tableTaskPriority-' . $aRow['id'] . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
-                $outputPriority .= '<span data-toggle="tooltip" title="' . _l('task_single_priority') . '"><i class="fa-solid fa-chevron-down tw-opacity-70"></i></span>';
-                $outputPriority .= '</a>';
-
-                $outputPriority .= '<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="tableTaskPriority-' . $aRow['id'] . '">';
-                foreach ($tasksPriorities as $priority) {
-                    if ($aRow['priority'] != $priority['id']) {
-                        $outputPriority .= '<li>
-                  <a href="#" onclick="task_change_priority(' . $priority['id'] . ',' . $aRow['id'] . '); return false;">
-                     ' . e($priority['name']) . '
-                  </a>
-               </li>';
-                    }
-                }
-                $outputPriority .= '</ul>';
-                $outputPriority .= '</div>';
-            }
-
-            $outputPriority .= '</span>';
-            $row[] = $outputPriority;
-
-            // Custom fields add values
-            foreach ($customFieldsColumns as $customFieldColumn) {
-                $row[] = (strpos($customFieldColumn, 'date_picker_') !== false ? _d($aRow[$customFieldColumn]) : $aRow[$customFieldColumn]);
-            }
-
             $row['DT_RowClass'] = 'has-row-options';
 
             if ((!empty($aRow['duedate']) && $aRow['duedate'] < date('Y-m-d')) && $aRow['status'] != Tasks_model::STATUS_COMPLETE) {
@@ -240,13 +164,6 @@ return App_table::find('tasks')
             return collect($ci->tasks_model->get_statuses())->map(fn ($status) => [
                 'value' => $status['id'],
                 'label' => $status['name']
-            ])->all();
-        }),
-
-        App_table_filter::new('priority', 'MultiSelectRule')->label(_l('tasks_list_priority'))->options(function ($ci) {
-            return collect(get_tasks_priorities())->map(fn ($priority) => [
-                'value' => $priority['id'],
-                'label' => $priority['name']
             ])->all();
         }),
 
