@@ -5,6 +5,11 @@
 # Cache
 /application/cache/
 
+# Uploads - User uploaded files
+/uploads/
+/uploads/company/
+/uploads/staff/
+
 # Temporary files
 *.tmp
 *.temp
